@@ -1,0 +1,31 @@
+#CCD 2022
+
+#Trivy scan 
+
+sudo apt-get install wget apt-transport-https gnupg lsb-release
+
+wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+
+echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/trivy.list
+
+trivy image python:3.4-alpine
+
+#Falco
+curl -s https://falco.org/repo/falcosecurity-3672BA8F.asc | apt-key add -
+
+echo "deb https://download.falco.org/packages/deb stable main" | tee -a /etc/apt/sources.list.d/falcosecurity.list
+
+apt-get update -y
+
+apt-get -y install linux-headers-$(uname -r)
+apt-get install -y falco
+
+
+#ThreatMapper
+# Docker installation process for ThreatMapper Management Console
+sudo sysctl -w vm.max_map_count=262144 # see https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html
+
+wget https://github.com/deepfence/ThreatMapper/raw/master/deployment-scripts/docker-compose.yml
+docker-compose -f docker-compose.yml up --detach
+
+
